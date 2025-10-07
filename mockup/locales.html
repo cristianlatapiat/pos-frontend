@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mantenedor de Sucursales - POS System</title>
+    
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f5f5f5;
+            padding: 24px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        /* Header Section */
+        .header {
+            background: white;
+            padding: 24px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+        
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .header-title h1 {
+            font-size: 28px;
+            font-weight: 500;
+            color: #1976d2;
+            margin: 0;
+        }
+        
+        .header-title .material-icons {
+            font-size: 32px;
+            color: #1976d2;
+        }
+        
+        .btn-primary {
+            background-color: #1976d2;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 500;
+            text-transform: uppercase;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background-color 0.3s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .btn-primary:hover {
+            background-color: #1565c0;
+        }
+        
+        /* Search Section */
+        .search-section {
+            background: white;
+            padding: 20px 24px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 24px;
+        }
+        
+        .search-box {
+            position: relative;
+            max-width: 500px;
+        }
+        
+        .search-box input {
+            width: 100%;
+            padding: 12px 12px 12px 48px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        .search-box input:focus {
+            outline: none;
+            border-color: #1976d2;
+        }
+        
+        .search-box .material-icons {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+        }
+        
+        /* Stats Bar */
+        .stats-bar {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 16px 24px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            flex: 1;
+            min-width: 200px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .stat-icon.active {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+        
+        .stat-icon.inactive {
+            background-color: #ffebee;
+            color: #c62828;
+        }
+        
+        .stat-icon.total {
+            background-color: #e3f2fd;
+            color: #1976d2;
+        }
+        
+        .stat-content h3 {
+            font-size: 24px;
+            font-weight: 500;
+            margin: 0;
+            color: #333;
+        }
+        
+        .stat-content p {
+            font-size: 12px;
+            color: #666;
+            margin: 4px 0 0 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        /* Grid Cards */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+        
+        .local-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .local-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+        }
+        
+        .card-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+        
+        .card-header.active {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        }
+        
+        .card-header.inactive {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+        }
+        
+        .card-title {
+            flex: 1;
+        }
+        
+        .card-title h3 {
+            font-size: 20px;
+            font-weight: 500;
+            margin: 0 0 4px 0;
+        }
+        
+        .card-title .local-code {
+            font-size: 12px;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+        
+        .status-chip {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 500;
+            text-transform: uppercase;
+            background: rgba(255,255,255,0.3);
+            backdrop-filter: blur(10px);
+        }
+        
+        .card-body {
+            padding: 20px;
+        }
+        
+        .info-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        
+        .info-row:last-child {
+            margin-bottom: 0;
+        }
+        
+        .info-row .material-icons {
+            color: #666;
+            font-size: 20px;
+            margin-top: 2px;
+        }
+        
+        .info-content {
+            flex: 1;
+        }
+        
+        .info-label {
+            font-size: 11px;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+        
+        .info-value {
+            font-size: 14px;
+            color: #333;
+            line-height: 1.4;
+        }
+        
+        .card-actions {
+            padding: 16px 20px;
+            background: #f5f5f5;
+            display: flex;
+            gap: 8px;
+            border-top: 1px solid #e0e0e0;
+        }
+        
+        .btn-action {
+            flex: 1;
+            padding: 10px 16px;
+            border: none;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: all 0.3s;
+        }
+        
+        .btn-edit {
+            background: #1976d2;
+            color: white;
+        }
+        
+        .btn-edit:hover {
+            background: #1565c0;
+        }
+        
+        .btn-toggle {
+            background: white;
+            color: #666;
+            border: 1px solid #ddd;
+        }
+        
+        .btn-toggle:hover {
+            background: #f5f5f5;
+        }
+        
+        .btn-toggle.active {
+            color: #2e7d32;
+            border-color: #2e7d32;
+        }
+        
+        .btn-toggle.inactive {
+            color: #c62828;
+            border-color: #c62828;
+        }
+        
+        /* Empty State */
+        .empty-state {
+            background: white;
+            padding: 60px 24px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .empty-state .material-icons {
+            font-size: 80px;
+            color: #ddd;
+            margin-bottom: 16px;
+        }
+        
+        .empty-state h3 {
+            font-size: 20px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+        
+        .empty-state p {
+            color: #999;
+            margin-bottom: 24px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .btn-primary {
+                justify-content: center;
+            }
+            
+            .stats-bar {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-title">
+                <span class="material-icons">store</span>
+                <h1>Gestión de Sucursales</h1>
+            </div>
+            <button class="btn-primary">
+                <span class="material-icons">add</span>
+                Nueva Sucursal
+            </button>
+        </div>
+        
+        <!-- Search Section -->
+        <div class="search-section">
+            <div class="search-box">
+                <span class="material-icons">search</span>
+                <input type="text" placeholder="Buscar por nombre, código o dirección...">
+            </div>
+        </div>
+        
+        <!-- Stats Bar -->
+        <div class="stats-bar">
+            <div class="stat-card">
+                <div class="stat-icon total">
+                    <span class="material-icons">store</span>
+                </div>
+                <div class="stat-content">
+                    <h3>12</h3>
+                    <p>Total Sucursales</p>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon active">
+                    <span class="material-icons">check_circle</span>
+                </div>
+                <div class="stat-content">
+                    <h3>10</h3>
+                    <p>Activas</p>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon inactive">
+                    <span class="material-icons">cancel</span>
+                </div>
+                <div class="stat-content">
+                    <h3>2</h3>
+                    <p>Inactivas</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Cards Grid -->
+        <div class="cards-grid">
+            <!-- Card 1 - Activa -->
+            <div class="local-card">
+                <div class="card-header active">
+                    <div class="card-title">
+                        <h3>Sucursal Centro</h3>
+                        <span class="local-code">Código: SUC-001</span>
+                    </div>
+                    <div class="status-chip">Activa</div>
+                </div>
+                <div class="card-body">
+                    <div class="info-row">
+                        <span class="material-icons">location_on</span>
+                        <div class="info-content">
+                            <div class="info-label">Dirección</div>
+                            <div class="info-value">Av. Principal 123, Centro, Santiago</div>
+                        </div>
+                    </div>
+                    <div class="info-row">
+                        <span class="material-icons">phone</span>
+                        <div class="info-content">
+                            <div class="info-label">Teléfono</div>
+                            <div class="info-value">+56 2 2345 6789</div>
+                        </div>
+                    </div>
+                    <div class="info-row">
+                        <span class="material-icons">schedule</span>
+                        <div class="info-content">
+                            <div class="info-label">Fecha de Creación</div>
+                            <div class="info-value">15 Enero 2024</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-actions">
+                    <button class="btn-action btn-edit">
+                        <span class="material-icons">edit</span>
+                        Editar
+                    </button>
+                    <button class="btn-action btn-toggle active">
+                        <span class="material-icons">toggle_on</span>
+                        Desactivar
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Card 2 - Activa -->
+            <div class="local-card">
+                <div class="card-header active">
+                    <div class="card-title">
+                        <h3>Sucursal Providencia</h3>
+                        <span class="local-code">Código: SUC-002</span>
+                    </div>
+                    <div class="status-chip">Activa</div>
+                </div>
+                <div class="card-body">
+                    <div class="info-row">
+                        <span class="material-icons">location_on</span>
+                        <div class="info-content">
+                            <div class="info-label">Dirección</div>
+                            <div class="info-value">Av. Providencia 456, Providencia, Santiago</div>
+                        </div>
+                    </div>
+                    <div class="info-row">
+                        <span class="material-icons">phone</span>
+                        <div class="info-content">
+                            <div class="info-label">Teléfono</div>
+                            <div class="info-value">+56 2 2987 6543</div>
+                        </div>
+                    </div>
+                    <div class="info-row">
+                        <span class="material-icons">schedule</span>
+                        <div class="info-content">
+                            <div class="info-label">Fecha de Creación</div>
+                            <div class="info-value">20 Febrero 2024</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-actions">
+                    <button class="btn-action btn-edit">
+                        <span class="material-icons">edit</span>
+                        Editar
+                    </button>
+                    <button class="btn-action btn-toggle active">
+                        <span class="material-icons">toggle_on</span>
+                        Desactivar
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Card 3 - Inactiva -->
+            <div class="local-card">
+                <div class="card-header inactive">
+                    <div class="card-title">
+                        <h3>Sucursal Las Condes</h3>
+                        <span class="local-code">Código: SUC-003</span>
+                    </div>
+                    <div class="status-chip">Inactiva</div>
+                </div>
+                <div class="card-body">
+                    <div class="info-row">
+                        <span class="material-icons">location_on</span>
+                        <div class="info-content">
+                            <div class="info-label">Dirección</div>
+                            <div class="info-value">Av. Apoquindo 789, Las Condes, Santiago</div>
+                        </div>
+                    </div>
+                    <div class="info-row">
+                        <span class="material-icons">phone</span>
+                        <div class="info-content">
+                            <div class="info-label">Teléfono</div>
+                            <div class="info-value">+56 2 2111 2222</div>
+                        </div>
+                    </div>
+                    <div class="info-row">
+                        <span class="material-icons">schedule</span>
+                        <div class="info-content">
+                            <div class="info-label">Fecha de Creación</div>
+                            <div class="info-value">10 Marzo 2024</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-actions">
+                    <button class="btn-action btn-edit">
+                        <span class="material-icons">edit</span>
+                        Editar
+                    </button>
+                    <button class="btn-action btn-toggle inactive">
+                        <span class="material-icons">toggle_off</span>
+                        Activar
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Card 4 - Activa -->
+            <div class="local-card">
+                <div class="card-header active">
+                    <div class="card-title">
+                        <h3>Sucursal Maipú</h3>
+                        <span class="local-code">Código: SUC-004</span>
+                    </div>
+                    <div class="status-chip">Activa</div>
+                </div>
+                <div class="card-body">
+                    <div class="info-row">
+                        <span class="material-icons">location_on</span>
+                        <div class="info-content">
+                            <div class="info-label">Dirección</div>
+                            <div class="info-value">Av. Pajaritos 1020, Maipú, Santiago</div>
+                        </div>
+                    </div>
+                    <div class="info-row">
+                        <span class="material-icons">phone</span>
+                        <div class="info-content">
+                            <div class="info-label">Teléfono</div>
+                            <div class="info-value">+56 2 2555 4444</div>
+                        </div>
+                    </div>
+                    <div class="info-row">
+                        <span class="material-icons">schedule</span>
+                        <div class="info-content">
+                            <div class="info-label">Fecha de Creación</div>
+                            <div class="info-value">05 Abril 2024</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-actions">
+                    <button class="btn-action btn-edit">
+                        <span class="material-icons">edit</span>
+                        Editar
+                    </button>
+                    <button class="btn-action btn-toggle active">
+                        <span class="material-icons">toggle_on</span>
+                        Desactivar
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Empty State (comentado - mostrar cuando no hay sucursales)
+        <div class="empty-state">
+            <span class="material-icons">store</span>
+            <h3>No hay sucursales registradas</h3>
+            <p>Comienza creando tu primera sucursal</p>
+            <button class="btn-primary">
+                <span class="material-icons">add</span>
+                Crear Primera Sucursal
+            </button>
+        </div>
+        -->
+    </div>
+</body>
+</html>

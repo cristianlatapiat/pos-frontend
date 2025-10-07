@@ -10,15 +10,15 @@ const api = axios.create({
   timeout: 30000, // 30 segundos
 });
 
-// Request Interceptor - Agregar token JWT a cada request
+// Request Interceptor - Agregar access token de Azure AD a cada request
 api.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    const token = sessionStorage.getItem('jwt_token');
-    
+    const token = sessionStorage.getItem('access_token');
+
     if (token && config.headers) {
       config.headers.Authorization = `Bearer ${token}`;
     }
-    
+
     return config;
   },
   (error: AxiosError) => {
@@ -34,7 +34,7 @@ api.interceptors.response.use(
   (error: AxiosError) => {
     // Token expirado o inválido
     if (error.response?.status === 401) {
-      sessionStorage.removeItem('jwt_token');
+      sessionStorage.removeItem('access_token');
       sessionStorage.removeItem('user');
       window.location.href = '/login';
     }

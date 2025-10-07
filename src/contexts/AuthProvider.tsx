@@ -45,8 +45,14 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
       // Login con Azure AD usando popup
       const response = await instance.loginPopup(loginRequest);
-      
+
       if (response.account) {
+        // Obtener access token para enviar al backend
+        const tokenResponse = await instance.acquireTokenSilent({
+          ...loginRequest,
+          account: response.account,
+        });
+
         const userData: User = {
           name: response.account.name || 'Usuario',
           email: response.account.username,
@@ -54,6 +60,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         };
         setUser(userData);
         sessionStorage.setItem('user', JSON.stringify(userData));
+        sessionStorage.setItem('access_token', tokenResponse.accessToken);
       }
     } catch (error) {
       console.error('Error en login:', error);
@@ -65,8 +72,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const logout = () => {
     sessionStorage.removeItem('user');
+    sessionStorage.removeItem('access_token');
     setUser(null);
-    
+
     // Logout de Azure AD
     instance.logoutPopup({
       postLogoutRedirectUri: '/',

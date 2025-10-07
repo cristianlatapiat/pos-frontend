@@ -40,13 +40,27 @@ export interface Role {
   description: string;
 }
 
-// ==================== LOCALES ====================
+// ==================== LOCALES (SUCURSALES) ====================
 export interface Local {
   localId: number;
   localName: string;
+  localCode: string;
   address: string;
+  phone?: string;
   isActive: boolean;
   createdAt: string;
+  updatedAt?: string;
+}
+
+export interface LocalCreateDTO {
+  localName: string;
+  address: string;
+  phone?: string;
+}
+
+export interface LocalUpdateDTO extends LocalCreateDTO {
+  localId: number;
+  isActive: boolean;
 }
 
 // ==================== CATEGORIES ====================

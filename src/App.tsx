@@ -3,7 +3,9 @@ import { ThemeProvider, createTheme, CssBaseline } from '@mui/material';
 import { AuthProvider } from './contexts/AuthProvider';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
+import Locales from './pages/Locales';
 import PrivateRoute from './components/common/PrivateRoute';
+import Layout from './components/layout/Layout';
 
 // Tema de Material-UI (claro)
 const theme = createTheme({
@@ -43,12 +45,24 @@ function App() {
             {/* Ruta pública */}
             <Route path="/login" element={<Login />} />
 
-            {/* Ruta privada - Dashboard */}
+            {/* Rutas privadas */}
             <Route
               path="/"
               element={
                 <PrivateRoute>
-                  <Dashboard />
+                  <Layout>
+                    <Dashboard />
+                  </Layout>
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/sucursales"
+              element={
+                <PrivateRoute>
+                  <Layout>
+                    <Locales />
+                  </Layout>
                 </PrivateRoute>
               }
             />

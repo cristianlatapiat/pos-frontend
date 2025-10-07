@@ -37,10 +37,10 @@ export const msalConfig: Configuration = {
   },
 };
 
-export const loginRequest: PopupRequest = {
-  scopes: ['User.Read'],
-};
+ export const loginRequest: PopupRequest = {
+    scopes: ['api://0d040e46-3aa2-4341-9378-cc202c1f97c2/access_as_user'], // ← Cambiar aquí
+  };
 
-export const tokenRequest = {
-  scopes: ['User.Read'],
-};
+  export const tokenRequest = {
+    scopes: ['api://0d040e46-3aa2-4341-9378-cc202c1f97c2/access_as_user'], // ← Y aquí
+  };
